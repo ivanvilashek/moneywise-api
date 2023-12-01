@@ -1,8 +1,8 @@
 import { Controller, Get } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserDocument } from './types';
 import { User } from '@app/common';
 import { ApiTags } from '@nestjs/swagger';
+import { User as UserDocument } from './models/user.schema';
 
 @ApiTags('Users')
 @Controller('users')

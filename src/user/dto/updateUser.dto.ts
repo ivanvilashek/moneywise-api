@@ -3,5 +3,5 @@ import { ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @ApiPropertyOptional()
-  refreshToken?: string;
+  readonly refreshToken?: string;
 }

@@ -4,7 +4,6 @@ import { User } from './models/user.schema';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
-import { UserDocument } from './types';
 
 @Injectable()
 export class UserService {
@@ -13,7 +12,7 @@ export class UserService {
     private readonly userModel: Model<User>,
   ) {}
 
-  public async create(createUserDto: CreateUserDto): Promise<UserDocument> {
+  public async create(createUserDto: CreateUserDto): Promise<User> {
     const { email } = createUserDto;
     const user = await this.findOneByEmail(email);
 
@@ -26,24 +25,18 @@ export class UserService {
     return createdUser.save();
   }
 
-  public async findOneByEmail(
-    email: string,
-    select?: string,
-  ): Promise<UserDocument> {
+  public async findOneByEmail(email: string, select?: string): Promise<User> {
     return this.userModel.findOne({ email }).select(select).exec();
   }
 
-  public async findOneById(
-    userId: string,
-    select?: string,
-  ): Promise<UserDocument> {
+  public async findOneById(userId: string, select?: string): Promise<User> {
     return this.userModel.findById(userId).select(select).exec();
   }
 
   public async update(
     userId: string,
     updateUserDto: UpdateUserDto,
-  ): Promise<UserDocument> {
+  ): Promise<User> {
     return this.userModel.findByIdAndUpdate(userId, updateUserDto, {
       new: true,
     });

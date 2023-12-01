@@ -1,11 +1,11 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { LoginUserDto } from '@app/auth/dto/loginUser.dto';
 import { CreateUserDto } from '@app/user/dto/createUser.dto';
+import { User } from '@app/user/models/user.schema';
 import { UserService } from '@app/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { Tokens } from './types';
 import { hash, compare } from 'bcrypt';
-import { UserDocument } from '../user/types';
 
 @Injectable()
 export class AuthService {
@@ -42,7 +42,7 @@ export class AuthService {
     return tokens;
   }
 
-  public async logout(userId: string): Promise<UserDocument> {
+  public async logout(userId: string): Promise<User> {
     return this.userService.update(userId, { refreshToken: null });
   }
 
@@ -100,7 +100,7 @@ export class AuthService {
   private async updateRefreshToken(
     userId: string,
     refreshToken: string,
-  ): Promise<UserDocument> {
+  ): Promise<User> {
     const hashed = await this.hashData(refreshToken);
     return this.userService.update(userId, { refreshToken: hashed });
   }
