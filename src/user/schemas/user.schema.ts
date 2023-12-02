@@ -1,9 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { hash } from 'bcrypt';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
+@ObjectType()
 @Schema()
 export class User extends Document {
+  @Field(() => ID)
+  @Prop()
+  _id: Types.ObjectId;
+
+  @Field()
   @Prop({ required: true, unique: true, lowercase: true, trim: true })
   email: string;
 
@@ -13,18 +20,23 @@ export class User extends Document {
   @Prop({ select: false })
   refreshToken: string;
 
+  @Field()
   @Prop({ required: true })
   firstName: string;
 
+  @Field()
   @Prop({ required: true })
   lastName: string;
 
+  @Field()
   @Prop()
   phone: string;
 
+  @Field(() => Date)
   @Prop({ default: new Date() })
   createdOn: Date;
 
+  @Field(() => Date)
   @Prop({ default: new Date() })
   modifiedOn: Date;
 }

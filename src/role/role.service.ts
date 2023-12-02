@@ -1,8 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Role } from './models/role.schema';
+import { Role } from './schemas/role.schema';
+import { DeleteResult } from '@app/common';
 import { FilterQuery, Model, Types } from 'mongoose';
-import { CreateRoleDto } from './dto/createRoleDto';
+import { CreateRoleDto } from './dto/createRole.dto';
 
 @Injectable()
 export class RoleService {
@@ -29,10 +30,10 @@ export class RoleService {
     });
 
     if (!role) {
-      throw new HttpException('Not Found', HttpStatus.NOT_FOUND)
+      throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
     }
 
-    return role
+    return role;
   }
 
   public async getWorkspaces(userId: string) {
@@ -59,11 +60,11 @@ export class RoleService {
       .exec();
   }
 
-  public async deleteOne(filter: FilterQuery<Role>) {
+  public async deleteOne(filter: FilterQuery<Role>): Promise<DeleteResult> {
     return this.roleModel.deleteOne(filter).exec();
   }
 
-  public async deleteMany(filter: FilterQuery<Role>) {
+  public async deleteMany(filter: FilterQuery<Role>): Promise<DeleteResult> {
     return this.roleModel.deleteMany(filter).exec();
   }
 }

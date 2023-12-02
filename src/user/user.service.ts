@@ -1,9 +1,8 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from './models/user.schema';
 import { Model } from 'mongoose';
-import { CreateUserDto } from './dto/createUser.dto';
-import { UpdateUserDto } from './dto/updateUser.dto';
+import { User } from './schemas';
+import { CreateUserDto } from './dto';
 
 @Injectable()
 export class UserService {
@@ -33,12 +32,25 @@ export class UserService {
     return this.userModel.findById(userId).select(select).exec();
   }
 
-  public async update(
+  // public async update(
+  //   userId: string,
+  //   updateUserDto: UpdateUserDto,
+  // ): Promise<User> {
+  //   return this.userModel.findByIdAndUpdate(userId, updateUserDto, {
+  //     new: true,
+  //   });
+  // }
+
+  public async updateRefresh(
     userId: string,
-    updateUserDto: UpdateUserDto,
+    refreshToken: string,
   ): Promise<User> {
-    return this.userModel.findByIdAndUpdate(userId, updateUserDto, {
-      new: true,
-    });
+    return this.userModel.findByIdAndUpdate(
+      userId,
+      { refreshToken },
+      {
+        new: true,
+      },
+    );
   }
 }

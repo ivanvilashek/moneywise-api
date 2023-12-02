@@ -1,7 +1,5 @@
 import { CreateUserDto } from './createUser.dto';
-import { ApiPropertyOptional, PartialType } from '@nestjs/swagger';
+import { InputType, OmitType } from '@nestjs/graphql';
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {
-  @ApiPropertyOptional()
-  readonly refreshToken?: string;
-}
+@InputType()
+export class UpdateUserDto extends OmitType(CreateUserDto, ['password'] as const) {}

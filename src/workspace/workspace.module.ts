@@ -3,11 +3,11 @@ import { APP_GUARD } from '@nestjs/core';
 import { WorkspaceService } from './workspace.service';
 import { AccessTokenGuard, RoleGuard } from '@app/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from '@app/user/models/user.schema';
-import { Workspace, WorkspaceSchema } from './models/workspace.schema';
-import { Role, RoleSchema } from '@app/role/models/role.schema';
-import { WorkspaceController } from './workspace.controller';
 import { RoleModule } from '@app/role/role.module';
+import { User, UserSchema } from '@app/user/schemas/user.schema';
+import { Workspace, WorkspaceSchema } from './schemas/workspace.schema';
+import { Role, RoleSchema } from '@app/role/schemas/role.schema';
+import { WorkspaceResolver } from './workspace.resolver';
 
 @Module({
   imports: [
@@ -22,8 +22,8 @@ import { RoleModule } from '@app/role/role.module';
     { provide: APP_GUARD, useClass: AccessTokenGuard },
     { provide: APP_GUARD, useClass: RoleGuard },
     WorkspaceService,
+    WorkspaceResolver,
   ],
-  controllers: [WorkspaceController],
-  exports: [WorkspaceService]
+  exports: [WorkspaceService],
 })
 export class WorkspaceModule {}

@@ -1,11 +1,11 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { LoginUserDto } from '@app/auth/dto/loginUser.dto';
-import { CreateUserDto } from '@app/user/dto/createUser.dto';
-import { User } from '@app/user/models/user.schema';
-import { UserService } from '@app/user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { Tokens } from './types';
 import { hash, compare } from 'bcrypt';
+import { UserService } from '@app/user/user.service';
+import { CreateUserDto } from '@app/user/dto';
+import { User } from '@app/user/schemas';
+import { Tokens } from './schemas';
+import { LoginUserDto } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -14,14 +14,14 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  public async signupLocal(createUserDto: CreateUserDto): Promise<Tokens> {
+  public async signUpLocal(createUserDto: CreateUserDto): Promise<Tokens> {
     const newUser = await this.userService.create(createUserDto);
     const tokens = await this.getTokens(newUser._id.toString(), newUser.email);
     await this.updateRefreshToken(newUser._id.toString(), tokens.refreshToken);
     return tokens;
   }
 
-  public async signinLocal(loginUserDto: LoginUserDto): Promise<Tokens> {
+  public async signInLocal(loginUserDto: LoginUserDto): Promise<Tokens> {
     const user = await this.userService.findOneByEmail(
       loginUserDto.email,
       '+password',
@@ -37,13 +37,15 @@ export class AuthService {
       throw new HttpException('Incorrect credentials', HttpStatus.BAD_REQUEST);
     }
 
-    const tokens = await this.getTokens(user._id, user.email);
-    await this.updateRefreshToken(user._id, tokens.refreshToken);
+    const userId = user._id.toString()
+
+    const tokens = await this.getTokens(userId, user.email);
+    await this.updateRefreshToken(userId, tokens.refreshToken);
     return tokens;
   }
 
   public async logout(userId: string): Promise<User> {
-    return this.userService.update(userId, { refreshToken: null });
+    return this.userService.updateRefresh(userId, null);
   }
 
   public async refreshTokens(
@@ -62,8 +64,8 @@ export class AuthService {
       throw new HttpException('Access Denied', HttpStatus.FORBIDDEN);
     }
 
-    const tokens = await this.getTokens(user._id, user.email);
-    await this.updateRefreshToken(user._id, tokens.refreshToken);
+    const tokens = await this.getTokens(userId, user.email);
+    await this.updateRefreshToken(userId, tokens.refreshToken);
     return tokens;
   }
 
@@ -102,7 +104,7 @@ export class AuthService {
     refreshToken: string,
   ): Promise<User> {
     const hashed = await this.hashData(refreshToken);
-    return this.userService.update(userId, { refreshToken: hashed });
+    return this.userService.updateRefresh(userId, hashed);
   }
 
   private async hashData(data: string): Promise<string> {

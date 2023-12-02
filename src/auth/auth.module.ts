@@ -2,17 +2,17 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserModule } from '@app/user/user.module';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { User, UserSchema } from '@app/user/models/user.schema';
-import { AccessTokenStrategy, RefreshTokenStrategy } from './strategies';
 import { AccessTokenGuard } from '@app/common';
+import { User, UserSchema } from '@app/user/schemas';
+import { UserModule } from '@app/user/user.module';
+import { AuthResolver } from './auth.resolver';
+import { AuthService } from './auth.service';
+import { AccessTokenStrategy, RefreshTokenStrategy } from './strategies';
 
 @Module({
-  controllers: [AuthController],
   providers: [
     { provide: APP_GUARD, useClass: AccessTokenGuard },
+    AuthResolver,
     AuthService,
     AccessTokenStrategy,
     RefreshTokenStrategy,

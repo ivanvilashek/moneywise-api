@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Workspace } from './models/workspace.schema';
 import { Model, Types } from 'mongoose';
-import { CreateWorkspaceDto } from './dto/createWorkspace.dto';
 import { RoleService } from '@app/role/role.service';
-import { Role } from '@app/role/types';
+import { DeleteResult } from '@app/common';
+import { RoleEnum } from '@app/role/types';
+import { Workspace } from './schemas';
+import { CreateWorkspaceDto } from './dto';
 
 @Injectable()
 export class WorkspaceService {
@@ -21,7 +22,7 @@ export class WorkspaceService {
     const createdWorkspace = new this.workspaceModel(createWorkspaceDto);
 
     await this.roleService.create({
-      type: Role.OWNER,
+      type: RoleEnum.OWNER,
       userId,
       workspaceId: createdWorkspace._id.toString(),
     });
@@ -29,7 +30,7 @@ export class WorkspaceService {
     return createdWorkspace.save();
   }
 
-  public async delete(workspaceId: string) {
+  public async delete(workspaceId: string): Promise<DeleteResult> {
     const deletedWorkspace = await this.workspaceModel
       .deleteOne({ _id: workspaceId })
       .exec();

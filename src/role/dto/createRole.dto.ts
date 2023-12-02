@@ -1,19 +1,20 @@
 import { IsNotEmpty, IsString } from 'class-validator';
-import { Role } from '../types';
-import { ApiProperty } from '@nestjs/swagger';
+import { RoleEnum } from '@app/role/types';
+import { ObjectType, Field } from '@nestjs/graphql';
 
+@ObjectType()
 export class CreateRoleDto {
-  @ApiProperty()
+  @Field()
   @IsNotEmpty()
   @IsString()
-  readonly type: Role;
+  readonly type: RoleEnum;
 
-  @ApiProperty()
+  @Field()
   @IsNotEmpty()
   @IsString()
   readonly userId: string;
 
-  @ApiProperty()
+  @Field()
   @IsNotEmpty()
   @IsString()
   readonly workspaceId: string;
